@@ -7,6 +7,7 @@ const express = require('express')
 const fs = require('fs')
 
 const db = require('./db/db.json')
+// const uniqid = require('uniqid');
 
 
 const app = express()
@@ -30,21 +31,24 @@ app.get('/notes', (req, res)=>{
     res.sendFile(path.join(__dirname+'/public/notes.html'))
 })
 
-// * The application should have a `db.json` file on the backend that will be used to store and retrieve notes using the `fs` module.
-
-// * The following API routes should be created:
-
-//   * GET `/api/notes` - Should read the `db.json` file and return all saved notes as JSON.
 
 
 app.get('/api/notes', (req, res)=>{
-     //I have to read JSON file and send data to the server ... I am lost 
+
     fs.readFile('./db/db.json', 'utf8' ,(err, data)=>{
         if(err){
             throw err
           }
-          console.log(JSON.parse(data))
-          res.json(JSON.parse(data))      
+        else{
+              try{
+                console.log(JSON.parse(data))
+                res.json(JSON.parse(data))         
+              }
+              catch (err){
+                  console.log("Error parsing JSON", err)
+              }
+
+          }
     
         })
                 
@@ -53,23 +57,25 @@ app.get('/api/notes', (req, res)=>{
 
 
 //   * POST `/api/notes` - Should receive a new note to save on the request body, add it to the `db.json` file, and then return the new note to the client.
+//   * DELETE `/api/notes/:id` - Should receive a query parameter containing the id of a note to delete. This means you'll need to find a way to give each note a unique `id
 app.post('/api/notes/', (req, res)=>{
+  
     const newNotes = req.body
-    // console.log(req.body)
-    const id = req.body.id
-    // console.log(id)
+    const randomNum = Math.floor((Math.random()+1)*10)
+  
+
     fs.readFile('./db/db.json', 'utf8' ,(err, note)=>{
         if(err){
             throw err
-          }
-          
-         let notes= JSON.parse(note)
-          notes.push(newNotes)
-          notes.push(id) 
-          
+          }  
+         
+          let notes= JSON.parse(note)
+          req.body.id += randomNum
+          notes.push(newNotes)  
           
           fs.writeFile('./db/db.json', JSON.stringify(notes), function (err) {
               if (err) throw err;
+
               console.log('Saved!');
               res.json(JSON.stringify(notes)) 
               console.log(notes)
