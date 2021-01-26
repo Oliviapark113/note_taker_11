@@ -7,7 +7,7 @@ const express = require('express')
 const fs = require('fs')
 
 const db = require('./db/db.json')
-// const uniqid = require('uniqid');
+const uniqid = require('uniqid');
 
 
 const app = express()
@@ -61,8 +61,7 @@ app.get('/api/notes', (req, res)=>{
 app.post('/api/notes/', (req, res)=>{
   
     const newNotes = req.body
-    const randomNum = Math.floor((Math.random()+1)*10)
-   
+    const randomId = uniqid()
   
 
     fs.readFile('./db/db.json', 'utf8' ,(err, note)=>{
@@ -71,7 +70,7 @@ app.post('/api/notes/', (req, res)=>{
           }  
          
           let notes= JSON.parse(note)
-          req.body.id += randomNum
+          req.body.id += randomId
           notes.push(newNotes)  
           
           fs.writeFile('./db/db.json', JSON.stringify(notes), function (err) {
@@ -90,8 +89,7 @@ app.post('/api/notes/', (req, res)=>{
 
 //   * DELETE `/api/notes/:id` - Should receive a query parameter containing the id of a note to delete. This means you'll need to find a way to give each note a unique `id` when it's saved. In order to delete a note, you'll need to read all notes from the `db.json` file, remove the note with the given `id` property, and then rewrite the notes to the `db.json` file.
 app.delete('/api/notes/:id', (req, res)=>{
-    // const targetId= req.params
-    // console.log(targetId)
+  
 
     fs.readFile('./db/db.json', 'utf8' ,(err, jsondata)=>{
         if(err){
