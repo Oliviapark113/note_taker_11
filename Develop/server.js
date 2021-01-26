@@ -62,6 +62,7 @@ app.post('/api/notes/', (req, res)=>{
   
     const newNotes = req.body
     const randomNum = Math.floor((Math.random()+1)*10)
+   
   
 
     fs.readFile('./db/db.json', 'utf8' ,(err, note)=>{
@@ -83,12 +84,41 @@ app.post('/api/notes/', (req, res)=>{
   });
           
 })
-
       
 
 })
 
 //   * DELETE `/api/notes/:id` - Should receive a query parameter containing the id of a note to delete. This means you'll need to find a way to give each note a unique `id` when it's saved. In order to delete a note, you'll need to read all notes from the `db.json` file, remove the note with the given `id` property, and then rewrite the notes to the `db.json` file.
+app.get('/api/notes/:id', (req, res)=>{
+    // const targetId= req.params
+    // console.log(targetId)
+
+    fs.readFile('./db/db.json', 'utf8' ,(err, jsondata)=>{
+        if(err){
+            throw err
+        }  
+     
+      
+        let myNotes= JSON.parse(jsondata)
+        console.log(myNotes)
+        const index = myNotes.findIndex((myNote) =>{return req.params.id === myNote.id })
+        myNotes.splice(index, 1)
+        
+        
+        fs.writeFile('./db/db.json', JSON.stringify(myNotes), function (err) {
+              if (err) throw err;
+
+              console.log('Saved!');
+              res.json(JSON.stringify(myNotes)) 
+              console.log(myNotes)
+            
+          });
+          
+})
+
+})
+
+
 
 app.listen(PORT, ()=>{
     console.log(`Server listening on http://localhost:${PORT}`)
