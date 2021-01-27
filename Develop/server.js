@@ -68,7 +68,7 @@ app.post('/api/notes/', (req, res) => {
             if (err) throw err;
 
             console.log('Saved!');
-            res.json(JSON.stringify(notes))
+            res.json(notes)
             console.log(notes)
         });
 
@@ -86,6 +86,7 @@ app.delete('/api/notes/:id', (req, res) => {
         let myNotes = JSON.parse(jsondata)
         const index = myNotes.findIndex((myNote) => { return req.params.id === myNote.id })
         myNotes.splice(index, 1)
+        console.log(index)
 
         fs.writeFile('./db/db.json', JSON.stringify(myNotes), function (err) {
             if (err) throw err;
